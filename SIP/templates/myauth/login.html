@@ -1,0 +1,11 @@
+{% extends 'myauth/base.html' %}
+{% load static %}
+
+{% block content %}
+Login Page
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit">Login</button>
+</form>
+{% endblock content %}

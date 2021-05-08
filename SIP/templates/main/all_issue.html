@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block  content %}
+
+all issues here
+{% for issue in issues %}
+    <div class="row">
+        <div class="col s12 m6">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+            <span class="card-title">{{issue.title}}</span>
+            <p>{{issue.description}}</p>
+            </div>
+            <div class="card-action">
+            <p> Created By {{issue.user.first_name}} </p>
+            </div>
+            <div class="card-action">
+            <a href="#">Like</a>
+            <a href="#">Comment</a>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock  %}
