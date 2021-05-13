@@ -51,4 +51,16 @@
   {% endfor %}
 </ul>
 
+<!--Pagination-->
+  <ul class="pagination">
+    <li class="waves-effect"><a href="?page=1">First</a></li>
+    {% if  issues.has_next %}
+      <li class="waves-effect"><a href="?page={{issues.next_page_number}}">Next</a></li>
+    {% endif %}
+    {% if issues.has_previous %}
+      <li class="waves-effect"><a href="?page={{issues.previous_page_number}}">Prev</a></li>
+    {% endif %}
+    <li class="waves-effect"><a href="?page={{issues.paginator.num_pages}}">Last</a></li>
+  </ul>
+
 {% endblock content %}

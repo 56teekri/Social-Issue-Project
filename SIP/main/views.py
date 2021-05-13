@@ -2,13 +2,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from main import models, forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 @login_required(login_url="login")
 def home(request):
-    top_3_issues = models.SocialIssue.objects.all()
+    issues = models.SocialIssue.objects.all().order_by("-submit_date")
+    page = request.GET.get("page", 1)
+    paginator = Paginator(issues, 5)
+    total_cnt = issues.count()
+    try:
+        issues = paginator.page(page)
+    except PageNotAnInteger:
+        issues = paginator.page(1)
+    except EmptyPage:
+        issues = paginator.page(paginator.num_pages)
     d = {
-        "issues": top_3_issues,
+        "issues": issues,
     }
     return render(request, "main/home.html", d)
 
@@ -29,16 +39,11 @@ def create_issue(request):
 
 
 @login_required(login_url="login")
-def my_issues(request):
-    issues = models.SocialIssue.objects.filter(id=request.user.id)
-    d = {"issues": issues}
-    return render(request, "main/my_issues.html", d)
-
-
-@login_required(login_url="login")
 def particular_issue(request, pk):
     issue = get_object_or_404(models.SocialIssue, pk=pk)
-    comments = models.SocialIssueComments.objects.filter(social_issue=issue)
+    comments = models.SocialIssueComments.objects.filter(social_issue=issue).order_by(
+        "-submit_date"
+    )
     if request.method == "POST":
         comment = request.POST["comment"]
         obj = models.SocialIssueComments.objects.create(
@@ -51,7 +56,16 @@ def particular_issue(request, pk):
 
 
 @login_required(login_url="login")
+def my_issues(request):
+    issues = models.SocialIssue.objects.filter(id=request.user.id).order_by(
+        "-submit_date"
+    )
+    d = {"issues": issues}
+    return render(request, "main/my_issues.html", d)
+
+
+@login_required(login_url="login")
 def all_issue(request):
-    issues = models.SocialIssue.objects.all()
+    issues = models.SocialIssue.objects.all().order_by("-submit_date")
     d = {"issues": issues}
     return render(request, "main/all_issue.html", d)
