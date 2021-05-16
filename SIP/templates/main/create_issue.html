@@ -10,6 +10,8 @@
     {% endfor %}
     <button type="submit">Create</button>
 </form>
+<a href="{% url 'home' %}">Home Page</a><br>
+<a href="{% url 'logout' %}">Logout</a>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}

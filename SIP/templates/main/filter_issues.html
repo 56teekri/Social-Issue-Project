@@ -59,19 +59,29 @@
         border: none;
         cursor: pointer;
       }
-    </style>
-    <script type="text/javascript">
-      function MyFunction() {
-        document.getElementById("searchbutton");
+      .navbar {
+        overflow: hidden;
+        background-color: #333;
+        font-family: Arial;
       }
-    </script>
+
+      /* Links inside the navbar */
+      .navbar a {
+        float: left;
+        font-size: 16px;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
     <!-- Navbar items -->
     <div id="navlist">
       <a href="{% url 'home' %}">Home</a>
-      <a href="{% url 'home' %}">Likes</a>
-      <a href="{% url 'home' %}">Comments</a>
+      <a href="{% url 'recent' %}">Recent</a>
+      <a href="{% url 'trending' %}">Trending</a>
       <!-- search bar right align -->
       <div class="search">
         <form action="" method="GET">
@@ -81,7 +91,7 @@
             id="search"
             name="search"
           />
-          <button type="submit" id="searchbutton" onclick="MyFunction()">
+          <button type="submit" id="searchbutton">
             <i class="fa fa-search" style="font-size: 18px"> </i>
           </button>
         </form>
@@ -89,6 +99,7 @@
     </div>
     <!-- logo with tag -->
     <div class="content">
+      <br />
       <h1 style="color: green; padding-top: 40px">Filter Issues</h1>
     </div>
     {% if length %}

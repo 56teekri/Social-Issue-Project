@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from datetime import timedelta, datetime
 
 
 @login_required(login_url="login")
@@ -18,9 +19,8 @@ def home(request):
         issues = paginator.page(1)
     except EmptyPage:
         issues = paginator.page(paginator.num_pages)
-    d = {
-        "issues": issues,
-    }
+    user = request.user
+    d = {"issues": issues, "user": user}
     return render(request, "main/home.html", d)
 
 
@@ -41,16 +41,34 @@ def create_issue(request):
 
 @login_required(login_url="login")
 def filter_issue(request):
-    length = 0
     try:
         search = request.GET["search"]
+    except:
+        search = ""
+    if search:
         issues = models.SocialIssue.objects.filter(title__icontains=search)
         length = len(issues)
-    except:
-        issues = []
-        length = 1
+    else:
+        issues = models.SocialIssue.objects.all()
+        length = len(issues)
     d = {"issues": issues, "length": length}
     return render(request, "main/filter_issues.html", d)
+
+
+@login_required(login_url="login")
+def recent_issues(request):
+    issues = models.SocialIssue.objects.filter(
+        submit_date__gt=datetime.today() - timedelta(30)
+    ).distinct()
+    d = {"issues": issues}
+    return render(request, "main/recent.html", d)
+
+
+@login_required(login_url="login")
+def trending_issues(request):
+    issues = models.SocialIssue.objects.filter(comments__gt=3).distinct()
+    d = {"issues": issues}
+    return render(request, "main/trending.html", d)
 
 
 @login_required(login_url="login")
@@ -72,15 +90,6 @@ def particular_issue(request, pk):
 
 @login_required(login_url="login")
 def my_issues(request):
-    issues = models.SocialIssue.objects.filter(id=request.user.id).order_by(
-        "-submit_date"
-    )
+    issues = models.SocialIssue.objects.filter(user=request.user)
     d = {"issues": issues}
     return render(request, "main/my_issues.html", d)
-
-
-@login_required(login_url="login")
-def all_issue(request):
-    issues = models.SocialIssue.objects.all().order_by("-submit_date")
-    d = {"issues": issues}
-    return render(request, "main/all_issue.html", d)
