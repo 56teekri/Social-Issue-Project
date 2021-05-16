@@ -3,6 +3,7 @@ from main import models, forms
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 
 @login_required(login_url="login")
@@ -36,6 +37,20 @@ def create_issue(request):
             return redirect("home")
     d = {"form": form}
     return render(request, "main/create_issue.html", d)
+
+
+@login_required(login_url="login")
+def filter_issue(request):
+    length = 0
+    try:
+        search = request.GET["search"]
+        issues = models.SocialIssue.objects.filter(title__icontains=search)
+        length = len(issues)
+    except:
+        issues = []
+        length = 1
+    d = {"issues": issues, "length": length}
+    return render(request, "main/filter_issues.html", d)
 
 
 @login_required(login_url="login")

@@ -8,7 +8,11 @@
       ><i class="material-icons">menu</i></a
     >
     <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a href={% url 'login' %}>Login</a></li>
+      {% if user.is_authenticated %}
+        <li><a href={% url 'login' %}>Login</a></li>
+      {% else %}
+        <li><a href={% url 'login' %}>User</a></li>
+      {% endif %}
       <li><a href={% url 'logout' %}>Logout</a></li>
     </ul>
   </div>
@@ -16,7 +20,7 @@
     <ul class="tabs tabs-transparent">
       <li class="tab"><a href="{% url 'create_issue' %}">Create Issue</a></li>
       <li class="tab"><a href="{% url 'my_issues' %}">My Issues</a></li>
-      <li class="tab"><a href="{% url 'my_issues' %}">Filter Issues</a></li>
+      <li class="tab"><a href="{% url 'filter_issue' %}">Filter Issues</a></li>
     </ul>
   </div>
 </nav>
